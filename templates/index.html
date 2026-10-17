@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}MovieMind — Find your next favorite{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="pulse"></span> YOUR NEXT FAVORITE IS OUT THERE</div>
+    <h1>Less scrolling.<br><em>More feeling.</em></h1>
+    <p>Discover films that fit your taste, with recommendations you can actually understand.</p>
+    <div class="hero-actions">
+      <a class="button primary" href="/recommend">Get recommendations <i class="bi bi-arrow-right"></i></a>
+      <a class="button ghost" href="/movies"><i class="bi bi-compass"></i> Explore the library</a>
+    </div>
+    <div class="hero-proof">
+      <span class="dataset-mark"><i class="bi bi-film"></i></span>
+      <span>Built on MovieLens data<br><strong>{{ '{:,}'.format(nav_movies) }} movies · {{ '{:,}'.format(nav_ratings) }} ratings</strong></span>
+    </div>
+  </div>
+  <!-- The preview uses a real popular title and its genre neighbours. -->
+  <aside class="hero-art" aria-label="A real MovieLens recommendation example">
+    {% if hero_movie %}
+    <div class="recommendation-preview">
+      <div class="preview-topline"><span><i class="bi bi-circle-fill"></i> FROM THE MOVIELENS CATALOG</span><span>01 / 01</span></div>
+      <div class="preview-feature">
+        <div class="preview-monogram"><i class="bi bi-camera-reels"></i><span>FEATURED<br>IN MOVIELENS</span></div>
+        <div class="preview-film-info">
+          <span class="preview-kicker">A POPULAR PICK</span>
+          <h2>{{ hero_movie.title }}</h2>
+          <p>{{ hero_movie.genres }}</p>
+          <div class="preview-rating"><i class="bi bi-star-fill"></i> {{ hero_movie.rating }} <span>· {{ '{:,}'.format(hero_movie.rating_count) }} ratings</span></div>
+        </div>
+      </div>
+      {% if hero_related %}
+      <div class="preview-related">
+        <div class="preview-section-title"><span>SIMILAR GENRE PROFILES</span><i class="bi bi-arrow-down-right"></i></div>
+        {% for movie in hero_related %}
+        <a class="preview-match" href="/movie/{{ movie.movieId }}">
+          <span class="match-index">0{{ loop.index }}</span>
+          <span class="match-copy"><strong>{{ movie.title }}</strong><small>{{ movie.genres }}</small></span>
+          <span class="match-score">{{ '%.2f'|format(movie.similarity) }}<small> score</small></span>
+        </a>
+        {% endfor %}
+        <small class="preview-footnote">Cosine similarity · genre features</small>
+      </div>
+      {% endif %}
+      <a class="preview-link" href="/recommend?movie_id={{ hero_movie.movieId }}">See how recommendations work <i class="bi bi-arrow-up-right"></i></a>
+    </div>
+    {% endif %}
+  </aside>
+</section>
+<section class="trust-strip"><span>BUILT AROUND WHAT YOU LOVE</span><b><i class="bi bi-film"></i> Genre-aware</b><b><i class="bi bi-graph-up-arrow"></i> Data-informed</b><b><i class="bi bi-chat-heart"></i> Explainable</b><b><i class="bi bi-lightning-charge"></i> Instant</b></section>
+<section class="section"><div class="section-head"><div><div class="eyebrow">A GOOD PLACE TO START</div><h2>Popular with movie lovers</h2></div><a class="text-link" href="/movies">See all movies <i class="bi bi-arrow-right"></i></a></div><div class="movie-grid">{% for movie in featured %}<a class="movie-card" href="/movie/{{ movie.movieId }}"><div class="poster-card p{{ loop.index }}"><span class="poster-number">{{ '%02d' % loop.index }}</span><i class="bi bi-play-circle"></i><span class="poster-title">{{ movie.title.split(' (')[0] }}</span></div><div class="movie-info"><strong>{{ movie.title }}</strong><span>{{ movie.genres }}</span><div class="movie-meta"><span><i class="bi bi-star-fill"></i> {{ movie.rating }}</span><small>{{ movie.rating_count }} ratings</small></div></div></a>{% endfor %}</div></section>
+<section class="how"><div><div class="eyebrow">HOW MOVIEMIND THINKS</div><h2>Good taste has<br>a pattern.</h2><p>We turn movie genres and community ratings into a thoughtful starting point for your next watch.</p><a class="text-link" href="/dashboard">Explore the data <i class="bi bi-arrow-right"></i></a></div><div class="steps"><article><span>01</span><i class="bi bi-hand-thumbs-up"></i><div><h3>Tell us what you like</h3><p>Pick a film or a few genres that feel like you.</p></div></article><article><span>02</span><i class="bi bi-bezier2"></i><div><h3>We find the connections</h3><p>Genre profiles and rating patterns reveal useful neighbors.</p></div></article><article><span>03</span><i class="bi bi-stars"></i><div><h3>Meet your next favorite</h3><p>Every suggestion comes with a reason to press play.</p></div></article></div></section>
+<section class="bottom-cta"><div><div class="eyebrow">YOUR NEXT MOVIE NIGHT, SORTED</div><h2>Let's find the one.</h2></div><a class="button dark-button" href="/recommend">Start discovering <i class="bi bi-arrow-right"></i></a></section>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}For You — MovieMind{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="eyebrow">YOUR PERSONAL SHORTLIST</div>
+  <h1>What sounds<br><em>good tonight?</em></h1>
+  <p>Choose the genres you’re in the mood for. We’ll find movies with a similar feel.</p>
+</section>
+<section class="recommend-panel">
+  {# Leave the chosen genres checked after submit so the shortlist is easy to adjust. #}
+  <form method="post" class="recommend-form">
+    <div class="genre-intro">
+      <div class="eyebrow">MAKE IT A GENRE NIGHT</div>
+      <h2>Pick what you feel like watching</h2>
+      <p>Select one or more categories. MovieMind will rank matching titles using genre overlap and community ratings.</p>
+      <button class="button primary">Generate recommendations <i class="bi bi-stars"></i></button>
+    </div>
+    <div class="form-column genre-column">
+      <label>CHOOSE ONE OR MORE GENRES</label>
+      <div class="genre-select">
+        {% for genre in genres %}
+        <label><input type="checkbox" name="genres" value="{{ genre }}" {% if genre in selected_genres %}checked{% endif %}><span>{{ genre }}</span></label>
+        {% endfor %}
+      </div>
+    </div>
+  </form>
+</section>
+{% if results %}
+<section class="section">
+  <div class="section-head"><div><div class="eyebrow">{% if seed %}BECAUSE YOU LIKED {{ seed.title|upper }}{% else %}BASED ON YOUR SELECTED GENRES{% endif %}</div><h2>Your next watchlist</h2></div></div>
+  <div class="recommend-list">
+    {% for movie in results %}
+    <article class="recommend-item">
+      <div class="rank">{{ '%02d' % loop.index }}</div>
+      <div class="recommend-poster p{{ (loop.index0 % 8)+1 }}"><span>{{ movie.title.split(' (')[0] }}</span></div>
+      <div class="recommend-main"><a href="/movie/{{ movie.movieId }}"><h3>{{ movie.title }}</h3></a><p>{{ movie.genres }}</p><small><i class="bi bi-lightbulb"></i> {{ movie.reason }}</small></div>
+      <div class="recommend-score"><b><i class="bi bi-star-fill"></i> {{ movie.rating }}</b>{% if movie.similarity is not none %}<small>{{ (movie.similarity*100)|round|int }}% match</small>{% endif %}</div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}
